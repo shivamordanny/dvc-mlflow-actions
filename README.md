@@ -82,3 +82,7 @@ git add . && git commit -m "version-8 ElasticNet" && git push origin main
 ```
 Check the Deployment status under Github actions on the git repository.
 Check the mlflow server to compare different models.
+
+Webapp:
+
+https://shivamordanny-wineq.herokuapp.com/
