@@ -54,6 +54,14 @@ jobs:
         echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
         echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
         
+    - id: files
+      uses: jitterbit/get-changed-files@v1
+    - run: |
+        for changed_file in ${{ steps.files.outputs.all }}; do
+          echo "Do something with this ${changed_file}."
+        done
+
+        
     - name: Deploy to Heroku
     # Add envs in repository secrets
       env:
