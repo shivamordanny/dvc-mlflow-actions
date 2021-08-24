@@ -63,3 +63,22 @@ setup commands -
 ```bash
 pip install -e . 
 ```
+
+Hyperparameter tuning:
+
+Change the hyperparameter for the elasticnet model from params.yaml
+
+Run the mlflow server:
+```bash
+mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 0.0.0.0 -p 1234
+```
+Perform steps to start training:
+```bash
+dvc repro
+```
+Commit the changes to trigger the CI/CD pipeline:
+```bash
+git add . && git commit -m "version-8 ElasticNet" && git push origin main
+```
+Check the Deployment status under Github actions on the git repository.
+Check the mlflow server to compare different models.
