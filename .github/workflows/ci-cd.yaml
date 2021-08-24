@@ -35,6 +35,33 @@ jobs:
     - name: Test with pytest
       run: |
         pytest -v
+        
+    - name: Expose git commit data
+      uses: rlespinasse/git-commit-data-action@v1.x
+
+    - name: Print git commit data
+      run: |
+        echo "Get author info"
+        echo " - ${{ env.GIT_COMMIT_AUTHOR }}"
+        echo " - ${{ env.GIT_COMMIT_AUTHOR_NAME }}"
+        echo " - ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}"
+        echo "Get committer info"
+        echo " - ${{ env.GIT_COMMIT_COMMITTER }}"
+        echo " - ${{ env.GIT_COMMIT_COMMITTER_NAME }}"
+        echo " - ${{ env.GIT_COMMIT_COMMITTER_EMAIL }}"
+        echo "Get message info"
+        echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}"
+        echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
+        echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
+        
+    - id: files
+      uses: jitterbit/get-changed-files@v1
+    - run: |
+        for changed_file in ${{ steps.files.outputs.all }}; do
+          echo "Do something with this ${changed_file}."
+        done
+
+        
     - name: Deploy to Heroku
     # Add envs in repository secrets
       env:
