@@ -1,79 +1,79 @@
 name: Python application
 
 on:
-  push:
-    branches:
-    - main
-  pull_request:
-    branches:
-    - main
+	push:
+		branches:
+		- main
+	pull_request:
+		branches:
+		- main
 
 jobs:
-  build:
+	build:
 
-    runs-on: ubuntu-latest
+		runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest -v
-        
-    - name: Expose git commit data
-      uses: rlespinasse/git-commit-data-action@v1.x
+		steps:
+		- uses: actions/checkout@v2
+			with:
+				fetch-depth: 0
+		- name: Set up Python 3.7
+			uses: actions/setup-python@v2
+			with:
+				python-version: 3.7
+		- name: Install dependencies
+			run: |
+				python -m pip install --upgrade pip
+				pip install flake8 pytest
+				if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+		- name: Lint with flake8
+			run: |
+				# stop the build if there are Python syntax errors or undefined names
+				flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+				# exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+				flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+		- name: Test with pytest
+			run: |
+				pytest -v
+				
+		- name: Expose git commit data
+			uses: rlespinasse/git-commit-data-action@v1.x
 
-    - name: Print git commit data
-      run: |
-        echo "Get author info"
-        echo " - ${{ env.GIT_COMMIT_AUTHOR }}"
-        echo " - ${{ env.GIT_COMMIT_AUTHOR_NAME }}"
-        echo " - ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}"
-        echo "Get committer info"
-        echo " - ${{ env.GIT_COMMIT_COMMITTER }}"
-        echo " - ${{ env.GIT_COMMIT_COMMITTER_NAME }}"
-        echo " - ${{ env.GIT_COMMIT_COMMITTER_EMAIL }}"
-        echo "Get message info"
-        echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}"
-        echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
-        echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
-        
-    - id: files
-      uses: jitterbit/get-changed-files@v1
-    - run: |
-        for changed_file in ${{ steps.files.outputs.all }}; do
-          echo "Do something with this ${changed_file}."
-        done
-        
-    - name: webhook
-      uses: muinmomin/webhook-action@v1.0.0
-      with:
-  	url: ${{ secrets.WEBHOOK_URL }}
-  	data: "{'command': 'publish'}"
+		- name: Print git commit data
+			run: |
+				echo "Get author info"
+				echo " - ${{ env.GIT_COMMIT_AUTHOR }}"
+				echo " - ${{ env.GIT_COMMIT_AUTHOR_NAME }}"
+				echo " - ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}"
+				echo "Get committer info"
+				echo " - ${{ env.GIT_COMMIT_COMMITTER }}"
+				echo " - ${{ env.GIT_COMMIT_COMMITTER_NAME }}"
+				echo " - ${{ env.GIT_COMMIT_COMMITTER_EMAIL }}"
+				echo "Get message info"
+				echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}"
+				echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
+				echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
+				
+		- id: files
+			uses: jitterbit/get-changed-files@v1
+		- run: |
+				for changed_file in ${{ steps.files.outputs.all }}; do
+					echo "Do something with this ${changed_file}."
+				done
+				
+		- name: webhook
+			uses: muinmomin/webhook-action@v1.0.0
+			with:
+				url: ${{ secrets.WEBHOOK_URL }}
+	 			data: "{'command': 'publish'}"
 
-        
-    - name: Deploy to Heroku
-    # Add envs in repository secrets
-      env:
-        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
-        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      if: github.ref == 'refs/heads/main' && job.status == 'success'
-      run: |
-        git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
-        git push heroku HEAD:main -f
+				
+		- name: Deploy to Heroku
+		# Add envs in repository secrets
+			env:
+				HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+				HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+			if: github.ref == 'refs/heads/main' && job.status == 'success'
+			run: |
+				git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+				git push heroku HEAD:main -f
