@@ -59,21 +59,27 @@ jobs:
     - run: |
         for changed_file in ${{ steps.files.outputs.all }}; do
           echo "Do something with this ${changed_file}."
+          echo " - ${{ env.GIT_COMMIT_AUTHOR }}"
         done
-        
-    - name: webhook
-      uses: muinmomin/webhook-action@v1.0.0
-      with:
-        url: ${{ secrets.WEBHOOK_URL }}
-        data: "{'command': 'publish'}"
+
+    - name: execute py script # run sj-gobierno.py to get the latest data
+      run: |
+        python repo-info.py
 
         
-    - name: Deploy to Heroku
-    # Add envs in repository secrets
-      env:
-        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
-        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      if: github.ref == 'refs/heads/main' && job.status == 'success'
-      run: |
-        git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
-        git push heroku HEAD:main -f
+    # - name: webhook
+    #   uses: muinmomin/webhook-action@v1.0.0
+    #   with:
+    #     url: ${{ secrets.WEBHOOK_URL }}
+    #     data: "{'command': 'publish'}"
+
+        
+    # - name: Deploy to Heroku
+    # # Add envs in repository secrets
+    #   env:
+    #     HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+    #     HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+    #   if: github.ref == 'refs/heads/main' && job.status == 'success'
+    #   run: |
+    #     git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+    #     git push heroku HEAD:main -f
