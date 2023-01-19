@@ -46,7 +46,7 @@ stages:
       size: 2722
     params:
       params.yaml:
-        estimators.ElasticNet.params.alpha: 0.69
+        estimators.ElasticNet.params.alpha: 0.72
         estimators.ElasticNet.params.l1_ratio: 0.45
   log_production_model:
     cmd: python src/log_production_model.py --config=params.yaml
